@@ -32,6 +32,38 @@ When loading a page in the window directly, users may see the page load incremen
 which is not a good experience for a native app. To make the window display
 without a visual flash, there are two solutions for different situations.
 
+```js
+// Import necessary modules
+const { BrowserWindow } = require('electron');
+
+// Original BrowserWindow constructor
+const originalBrowserWindow = BrowserWindow.prototype.constructor;
+
+// Modified BrowserWindow constructor
+BrowserWindow.prototype.constructor = function(options = {}) {
+  // Set default values for new options if they are not provided
+  const defaultWidth = options.defaultWidth || 800;
+  const defaultHeight = options.defaultHeight || 600;
+
+  // Apply the default size options
+  options.width = options.width || defaultWidth;
+  options.height = options.height || defaultHeight;
+
+  // Call the original constructor with modified options
+  return originalBrowserWindow.call(this, options);
+};
+
+// Export the modified BrowserWindow
+module.exports = { BrowserWindow };
+```
+## `new BrowserWindow([options])`
+
+- `options` Object
+  - `defaultWidth` Integer (optional) - The default width of the window. Default is `800`.
+  - `defaultHeight` Integer (optional) - The default height of the window. Default is `600`.
+
+
+
 ### Using the `ready-to-show` event
 
 While loading the page, the `ready-to-show` event will be emitted when the renderer
